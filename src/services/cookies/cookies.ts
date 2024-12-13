@@ -9,7 +9,7 @@ export class CookieError extends Error {
     }
 }
 
-async function setCookies(name: string | number, content: string | number, expiry_date: string | Date | null, path: string | null) {
+async function setCookie(name: string | number, content: string | number, expiry_date: string | Date | null, path: string | null) {
     try {
         document.cookie = `${name}=${content}; expires=${expiry_date}; path=${path}`
     } catch (error) {
@@ -49,4 +49,4 @@ async function clearCookies() {
     }
 }
 
-export { setCookies, getCookies, getCookie, deleteCookie, clearCookies }
+export { setCookie, getCookies, getCookie, deleteCookie, clearCookies }
