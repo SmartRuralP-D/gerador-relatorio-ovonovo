@@ -19,15 +19,19 @@ if (!getApps().length) {
     initializeApp(firebaseConfig);
 }
 
-async function register(email: string, password: string) {
+async function register(email: string | Promise<string>, password: string | Promise<string>) {
   const auth = getAuth(getApps()[0]);
-  return createUserWithEmailAndPassword(auth, email, password);
+  const resolvedEmail = await Promise.resolve(email);
+  const resolvedPassword = await Promise.resolve(password);
+  return createUserWithEmailAndPassword(auth, resolvedEmail, resolvedPassword);
 }
 
-async function login(email: string, password: string) {
+async function login(email: string | Promise<string>, password: string | Promise<string>) {
     const auth = getAuth(getApps()[0]);
     try {
-        return await signInWithEmailAndPassword(auth, email, password);
+        const resolvedEmail = await Promise.resolve(email);
+        const resolvedPassword = await Promise.resolve(password);
+        return await signInWithEmailAndPassword(auth, resolvedEmail, resolvedPassword);
     } catch (error: any) {
         if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
             throw new Error('Email ou senha incorretos.');
