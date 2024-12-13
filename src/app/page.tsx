@@ -4,7 +4,6 @@ import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import {
     Form,
     FormField,
@@ -17,7 +16,6 @@ import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { login } from "@/services/firebase/firebase";
-import { setCookie } from "@/services/cookies/cookies";
 import { useToast } from "@/hooks/use-toast"
 
 const schema = z.object({
@@ -51,8 +49,7 @@ export default function Home() {
         })
     }
 
-    // checks cookies for user session
-    // if session is active, redirect to dashboard
+    // TODO: implement cookies to keep user logged in
 
     return (
         <div className="h-[86vh] w-full">
