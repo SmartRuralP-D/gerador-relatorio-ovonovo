@@ -20,12 +20,12 @@ if (!getApps().length) {
 }
 
 async function register(email: string, password: string) {
-  const auth = getAuth();
+  const auth = getAuth(getApps()[0]);
   return createUserWithEmailAndPassword(auth, email, password);
 }
 
 async function login(email: string, password: string) {
-    const auth = getAuth();
+    const auth = getAuth(getApps()[0]);
     try {
         return await signInWithEmailAndPassword(auth, email, password);
     } catch (error: any) {
