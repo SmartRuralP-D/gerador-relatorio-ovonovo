@@ -1,19 +1,13 @@
 'use server'
 
-import{ cookies } from 'next/headers'
-
-export class CookieError extends Error {
-    constructor(error: string) {
-        super(error)
-        this.name = 'CookieError'
-    }
-}
+import { cookies } from 'next/headers'
 
 async function setCookie(name: string | number, content: string | number, expiry_date: string | Date | null, path: string | null) {
     try {
-        document.cookie = `${name}=${content}; expires=${expiry_date}; path=${path}`
+        const cookieStore = await cookies()
+        cookieStore.set(String(name), String(content), { expires: expiry_date ? new Date(expiry_date) : undefined, path: path || '/' })
     } catch (error) {
-        throw new CookieError(String(error))
+        throw new Error(String(error))
     }
 }
 
@@ -22,30 +16,29 @@ async function getCookies(): Promise<string> {
     return JSON.stringify(allCookies)
 }
 
-
-async function getCookie(name: string): Promise<string> {
-    const cookie = (await cookies()).get(name)
-    return JSON.stringify(cookie)
+async function getCookie(name: string): Promise<string | undefined> {
+    const cookie = (await cookies()).get(name);
+    return cookie?.value;
 }
 
 async function deleteCookie(name: string) {
     try {
-        // sets the cookie to expire
-        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`
+        const cookieStore = await cookies()
+        cookieStore.set(name, '', { expires: new Date(0), path: '/' })
     } catch (error) {
-        throw new CookieError(String(error))
+        throw new Error(String(error))
     }
 }
 
 async function clearCookies() {
     try {
-        const cookies = document.cookie.split("; ");
-        for (const cookie of cookies) {
-            const [name] = cookie.split("=");
-            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+        const cookieStore = await cookies()
+        const allCookies = (await cookieStore.getAll())
+        for (const cookie of allCookies) {
+            cookieStore.set(cookie.name, '', { expires: new Date(0), path: '/' })
         }
     } catch (error) {
-        throw new CookieError(String(error));
+        throw new Error(String(error))
     }
 }
 

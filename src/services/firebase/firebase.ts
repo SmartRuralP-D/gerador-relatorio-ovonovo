@@ -1,3 +1,5 @@
+'use client'
+
 import { initializeApp, getApps } from "firebase/app";
 import {
   getAuth,
@@ -20,10 +22,10 @@ if (!getApps().length) {
 }
 
 async function register(email: string | Promise<string>, password: string | Promise<string>) {
-  const auth = getAuth(getApps()[0]);
-  const resolvedEmail = await Promise.resolve(email);
-  const resolvedPassword = await Promise.resolve(password);
-  return createUserWithEmailAndPassword(auth, resolvedEmail, resolvedPassword);
+    const auth = getAuth(getApps()[0]);
+    const resolvedEmail = await Promise.resolve(email);
+    const resolvedPassword = await Promise.resolve(password);
+    return createUserWithEmailAndPassword(auth, resolvedEmail, resolvedPassword);
 }
 
 async function login(email: string | Promise<string>, password: string | Promise<string>) {

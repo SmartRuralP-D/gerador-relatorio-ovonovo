@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { login } from "@/services/firebase/firebase";
 import { useToast } from "@/hooks/use-toast"
+import { getCookie, setCookie } from "@/services/cookies/cookies";
 
 const schema = z.object({
     email: z.string().email({ message: "Por favor insira um email válido" }).nonempty({ message: "Por favor insira um email" }),
@@ -27,6 +28,8 @@ export default function Home() {
     const router = useRouter();
     const { toast } = useToast();
 
+    const [loading, setLoading] = useState<boolean>(false);
+
     const form = useForm({
         resolver: zodResolver(schema),
         defaultValues: {
@@ -36,20 +39,44 @@ export default function Home() {
     });
 
     function onSubmit(data: z.infer<typeof schema>) {
+        setLoading(true);
         login(data.email, data.password).then(() => {
+            toast({
+                title: "Login efetuado com sucesso",
+                description: "Redirecionando para o dashboard",
+                duration: 2000,
+            })
+            const cookiePath = "/";
+            setCookie("user", data.email, null, cookiePath);
+            setCookie("password", data.password, null, cookiePath);
             setTimeout(() => {
                 router.push("/dashboard")
             }, 1000);
-        }).catch((error: Error) => {
+        }).catch((error: Error) => { // todo: handle error message better
             toast({
                 title: "Erro ao fazer login",
                 description: error.message,
-                duration: 5000,
+                duration: 2000,
             })
         })
+        setLoading(false);
     }
 
-    // TODO: implement cookies to keep user logged in
+    useEffect(() => { // check if user is already logged in
+        const user = document.cookie.includes("user") ? getCookie("user") : null;
+        const password = document.cookie.includes("password") ? getCookie("password") : null;
+        if (user && password) {
+            login(user, password).then(() => {
+                router.push("/dashboard")
+            }).catch(() => { // todo: handle error message better
+                toast({
+                    title: "Erro ao fazer login",
+                    description: "Tente novamente",
+                    duration: 2000,
+                })
+            })
+        }
+    }, [router, toast])
 
     return (
         <div className="h-[86vh] w-full">
@@ -83,7 +110,7 @@ export default function Home() {
                                         </FormItem>
                                     )} />
                             </div>
-                            <Button variant="secondary" type="submit">Entrar</Button>
+                            <Button loader={true} loading={loading} variant="secondary" type="submit">Entrar</Button>
                         </form>
                     </Form>
                 </div>
