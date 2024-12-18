@@ -25,17 +25,27 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from '@/hooks/use-toast'
 import { DateRange } from 'react-day-picker'
+import { Spinner } from '@/components/ui/spinner'
 
 const formSchema = z.object({
-    dateTime: z.date(),
+    dateRange: z.object({
+        dateFrom: z.date(),
+        dateTo: z.date(),
+    }),
+    dateAccommodation: z.date(),
 })
 
 type FormSchemaType = z.infer<typeof formSchema>;
 
 const DateForm = () => {
+
+    const [currentDate, setCurrentDate] = useState<Date>(new Date(Date.now()))
+
     const form = useForm<FormSchemaType>({
         resolver: zodResolver(formSchema),
     })
+
+    const [loading, setLoading] = useState(false);
 
     function onSubmit(data: FormSchemaType) {
         toast({
@@ -49,18 +59,25 @@ const DateForm = () => {
     }
 
     const [dateRange, setDateRange] = useState<DateRange | undefined>({
-        from: new Date(Date.now()),
-        to: new Date(Date.now()),
+        from: currentDate,
+        to: currentDate,
     })
+    const [timeForRange, setTimeForRange] = useState<Date | undefined>(currentDate) // only contains the time and currentDate
+    // const [dateAccommodation, setDateAccommodation] = useState<Date | undefined>(currentDate)
 
-    function handleDateChange(newDateRange: DateRange | undefined) {
-        if (newDateRange?.from) {
-            const newDate = new Date(newDateRange.from);
-            setDateRange({ from: newDate, to: newDate });
-            form.setValue('dateTime', newDate);
+    function handleDateRangeChange(newDateRange: DateRange | undefined) {
+        if (newDateRange?.from && newDateRange?.to) {
+            setDateRange({ from: new Date(newDateRange.from), to: new Date(newDateRange.to) })
+            form.setValue('dateRange.dateFrom', newDateRange.from)
+            form.setValue('dateRange.dateTo', newDateRange.to)
         }
     }
 
+    function handleTimeRangeChange(newTime: Date | undefined) { // saves the time in a different place
+        if (newTime) {
+            setTimeForRange(newTime)
+        }
+    }
 
     return (
         <Form {...form}>
@@ -68,20 +85,20 @@ const DateForm = () => {
                 className="flex items-center gap-4 justify-center flex-col"
                 onSubmit={form.handleSubmit(onSubmit)}
             >
-                <FormField
-                    control={form.control}
-                    name="dateTime"
-                    render={({ field }) => (
-                        <div className="flex flex-col gap-5">
+                <div className="flex flex-col gap-5">
+                    <FormField
+                        control={form.control}
+                        name="dateRange"
+                        render={({ field }) => (
                             <FormItem className="flex flex-col">
                                 <FormLabel className="text-left">Escolha o período</FormLabel>
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <Button
-                                            id="date"
+                                            id="dateRange"
                                             variant={"outline"}
                                             className={cn(
-                                                "w-[300px] justify-start text-left font-normal",
+                                                "justify-start text-left font-normal",
                                                 !dateRange && "text-muted-foreground"
                                             )}
                                         >
@@ -91,7 +108,7 @@ const DateForm = () => {
                                                     <>
                                                         {format(dateRange.from, "PPP", { locale: ptBR })} -{" "}
                                                         {format(dateRange.to, "PPP", { locale: ptBR })}
-                                                        {format(dateRange.to, " HH:mm:ss", { locale: ptBR })}
+                                                        {format(timeForRange ?? dateRange.to, " HH:mm:ss", { locale: ptBR })}
                                                     </>
                                                 ) : (
                                                     format(dateRange.from, "PPP HH:mm:ss", { locale: ptBR })
@@ -107,24 +124,27 @@ const DateForm = () => {
                                             mode="range"
                                             defaultMonth={dateRange?.from}
                                             selected={dateRange}
-                                            onSelect={setDateRange}
+                                            onSelect={handleDateRangeChange}
                                             numberOfMonths={2}
                                         />
                                         <div className="p-3 border-t border-border">
                                             <TimePicker
                                                 setDate={(date) => {
-                                                    handleDateChange({
-                                                        ...dateRange,
-                                                        from: date,
-                                                    })
+                                                    handleTimeRangeChange(date)
                                                 }}
-                                                date={field.value}
+                                                date={timeForRange}
                                             />
                                         </div>
                                     </PopoverContent>
                                 </Popover>
                             </FormItem>
-                            <FormItem className="flex flex-col">
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="dateAccommodation"
+                        render={({ field }) => (
+                            < FormItem className="flex flex-col">
                                 <FormLabel className="text-left">Escolha a data e hora de alojamento</FormLabel>
                                 <Popover>
                                     <FormControl>
@@ -132,7 +152,7 @@ const DateForm = () => {
                                             <Button
                                                 variant="outline"
                                                 className={cn(
-                                                    "w-[280px] justify-start text-left font-normal",
+                                                    "justify-start text-left font-normal",
                                                     !field.value && "text-muted-foreground"
                                                 )}
                                             >
@@ -161,14 +181,20 @@ const DateForm = () => {
                                     </PopoverContent>
                                 </Popover>
                             </FormItem>
-                        </div>
-                    )}
-                />
-                <Button type="submit" loader={
-                    <p>hello</p>
-                } loading={true}>Gerar relatório</Button>
+                        )}
+                    />
+                </div>
+                <Button
+                    type="submit"
+                    loader={
+                        <Spinner />
+                    }
+                    loading={loading}
+                >
+                    Gerar relatório
+                </Button>
             </form>
-        </Form>
+        </Form >
     )
 }
 DateForm.displayName = 'DateForm'
