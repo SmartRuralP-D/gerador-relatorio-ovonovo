@@ -1,17 +1,20 @@
 import axios from 'axios';
 
-const thingsBoardInstance = axios.create({
-    baseURL: 'https://thingsboard.cloud/api/v1',
+const apiInstance = axios.create({
+    baseURL: process.env.NEXT_PUBLIC_API_HOSTNAME,
     });
 
-thingsBoardInstance.interceptors.request.use((request) => {
+
+// request interceptor
+apiInstance.interceptors.request.use((request) => {
     //console.log('Starting Request', request)
     return request
 })
 
-thingsBoardInstance.interceptors.response.use((response) => {
+// response interceptor
+apiInstance.interceptors.response.use((response) => {
     //console.log('Response:', response)
     return response
 })
 
-export { thingsBoardInstance };
+export { apiInstance };
