@@ -12,15 +12,23 @@ async function setCookie(name: string | number, content: string | number, expiry
 }
 
 async function getCookies(): Promise<string> {
-    const allCookies = (await cookies()).getAll()
-    return JSON.stringify(allCookies)
+    try {
+        const cookieStore = await cookies()
+        const allCookies = cookieStore.getAll()
+        return JSON.stringify(allCookies)
+    } catch (error) {
+        throw new Error(String(error))
+    }
 }
 
-async function getCookie(name: string): Promise<string> {
-    return new Promise((resolve) => {
-        const value = document.cookie.split('; ').find(row => row.startsWith(name))?.split('=')[1];
-        resolve(value || '');
-    });
+async function getCookie(name: string): Promise<string | null> {
+    try {
+        const cookieStore = await cookies();
+        const cookie = cookieStore.get(name);
+        return cookie ? cookie.value : null;
+    } catch (error: any) {
+        throw new Error(`Failed to get cookie: ${error.message}`);
+    }
 }
 
 async function deleteCookie(name: string) {
