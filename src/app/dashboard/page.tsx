@@ -1,8 +1,6 @@
 'use client'
 
 import React, { useEffect, useState } from "react";
-import { Button } from '@/components/ui/button';
-import { thingsBoardInstance } from '@/services/axios/instances';
 import { toast } from '@/hooks/use-toast';
 import { getCookie } from '@/services/cookies/cookies';
 import { login } from '@/services/firebase/firebase';
@@ -11,52 +9,6 @@ import { DateForm } from '@/components/core/DateForm/date-form';
 
 export default function Dashboard() {
     const router = useRouter();
-
-    const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-    const [endDate, setEndDate] = useState<Date | undefined>(undefined);
-    const [accommodationDate, setAccommodationDate] = useState<Date | undefined>(undefined);
-
-    function handleReport() {
-        if (!startDate || !endDate || !accommodationDate) {
-            toast({
-                title: "Preencha todos os campos",
-                description: "Por favor preencha todos os campos para gerar o relatório",
-                duration: 2000,
-            })
-            return;
-        }
-
-        function getBearerToken() { // TODO: fix thingsboard api call
-            thingsBoardInstance.get("/api/auth/login").then((response) => {
-                return response.data.token;
-            }).catch((error) => {
-                toast({
-                    title: "Erro ao fazer login no thingsboard",
-                    description: error.message,
-                    duration: 3500,
-                })
-            })
-        }
-        const token = getBearerToken();
-
-        // transform to unix dates
-        const start = startDate?.getTime();
-        const end = endDate?.getTime();
-        const accommodation = accommodationDate?.getTime();
-
-        // TODO: fix thingsboard api call
-        thingsBoardInstance.get(`/reports/telemetry/${start}/${end}`)
-            .then((response) => {
-                console.log(response.data);
-            })
-            .catch((error) => {
-                toast({
-                    title: "Erro ao gerar relatório, tente novamente",
-                    description: error.message,
-                    duration: 3000,
-                })
-            });
-    }
 
     useEffect(() => {
         const checkUser = async () => {
@@ -78,14 +30,14 @@ export default function Dashboard() {
                         description: "Por favor faça login novamente",
                         duration: 2000,
                     })
-                    router.push("/");
+                    router.push('/');
                 })
             } else {
                 toast({
                     title: "Faça login para acessar o sistema",
                     duration: 2000,
                 })
-                router.push("/");
+                router.push('/');
             }
         };
         checkUser()

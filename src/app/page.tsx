@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import React, { useEffect, useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { useRouter } from 'next/navigation'
 import {
     Form,
     FormField,
@@ -11,13 +11,13 @@ import {
     FormMessage,
     FormItem,
     FormControl,
-} from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { login } from "@/services/firebase/firebase";
-import { useToast } from "@/hooks/use-toast"
-import { getCookie, setCookie } from "@/services/cookies/cookies";
+} from '@/components/ui/form'
+import { useForm } from 'react-hook-form'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { login } from '@/services/firebase/firebase'
+import { useToast } from '@/hooks/use-toast'
+import { getCookie, setCookie } from '@/services/cookies/cookies'
 
 const schema = z.object({
     email: z.string().email({ message: "Por favor insira um email válido" }).nonempty({ message: "Por favor insira um email" }),
@@ -62,21 +62,40 @@ export default function Home() {
         setLoading(false);
     }
 
-    useEffect(() => { // check if user is already logged in
-        const user = document.cookie.includes("user") ? getCookie("user") : null;
-        const password = document.cookie.includes("password") ? getCookie("password") : null;
-        if (user && password) {
-            login(user, password).then(() => {
-                router.push("/dashboard")
-            }).catch(() => { // todo: handle error message better
-                toast({
-                    title: "Erro ao fazer login",
-                    description: "Tente novamente",
-                    duration: 2000,
-                })
-            })
+    useEffect(() => { // check if the user is already logged in 
+        const fetchData = async () => {
+            try {
+                const user = await getCookie("user")
+                const password = await getCookie("password")
+
+                console.log("user:", user, "password:", password)
+
+                if (user && password) {
+                    login(user, password).then((response) => {
+                        if (response) {
+                            router.push("/dashboard")
+                        } else {
+                            toast({
+                                title: "Erro ao fazer login com credenciais salvas",
+                                description: "Tente novamente",
+                                duration: 2000,
+                            })
+                        }
+                    }).catch(() => {
+                        // handle error better
+                        toast({
+                            title: "Erro ao fazer login com credenciais salvas",
+                            description: "Tente novamente",
+                            duration: 2000,
+                        })
+                    })
+                }
+            } catch (error) {
+                console.error("Error fetching cookies:", error)
+            }
         }
-    }, [router, toast])
+        fetchData()
+    }, [router]);
 
     return (
         <div className="h-[86vh] w-full">
