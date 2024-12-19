@@ -16,9 +16,11 @@ async function getCookies(): Promise<string> {
     return JSON.stringify(allCookies)
 }
 
-async function getCookie(name: string): Promise<string | undefined> {
-    const cookie = (await cookies()).get(name);
-    return cookie?.value;
+async function getCookie(name: string): Promise<string> {
+    return new Promise((resolve) => {
+        const value = document.cookie.split('; ').find(row => row.startsWith(name))?.split('=')[1];
+        resolve(value || '');
+    });
 }
 
 async function deleteCookie(name: string) {
