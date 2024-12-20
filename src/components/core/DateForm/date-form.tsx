@@ -223,10 +223,10 @@ const DateForm = () => {
     return (
         <Form {...form}>
             <form
-                className="flex items-center gap-4 justify-center flex-col"
+                className="flex items-center gap-6 justify-center flex-col w-auto h-auto"
                 onSubmit={form.handleSubmit(onSubmit)}
             >
-                <div className="flex flex-col gap-5">
+                <div className="flex flex-col gap-10">
                     <FormField
                         control={form.control}
                         name="dateRange"
@@ -247,11 +247,11 @@ const DateForm = () => {
                                                 <CalendarIcon />
                                                 {dateRange?.from ? (
                                                     dateRange.to ? (
-                                                        <>
+                                                        <div className="flex text-wrap">
                                                             {format(dateRange.from, "PPP", { locale: ptBR })} -{" "}
                                                             {format(dateRange.to, "PPP", { locale: ptBR })}
                                                             {format(timeForRange ?? dateRange.to, " HH:mm:ss", { locale: ptBR })}
-                                                        </>
+                                                        </div>
                                                     ) : (
                                                         format(dateRange.from, "PPP HH:mm:ss", { locale: ptBR })
                                                     )
@@ -337,7 +337,7 @@ const DateForm = () => {
                         render={({ field }) => (
                             <FormItem className="flex flex-col">
                                 <FormLabel className="text-left">Escolha a unidade produtiva</FormLabel>
-                                <div className="flex w-full gap-4">
+                                <div className="flex w-auto gap-4 items-center md:flex-nowrap flex-wrap justify-between">
                                     <FormControl>
                                         <Select onValueChange={(value) => {
                                             field.onChange(value)
@@ -357,15 +357,15 @@ const DateForm = () => {
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
-                                    <div className="flex items-center gap-2 w-full">
-                                        <div className="flex items-center w-full">
+                                    <div className="flex items-center gap-2 w-full justify-center">
+                                        <div className="flex items-center w-auto">
                                             {units.find((unit) => unit.id === field.value)?.installation_date && (
-                                                <p className="border border-black text-popover-foreground shadows-md text-xs rounded-md px-2 py-1.5 w-full tracking-tighter">{units.find((unit) => unit.id === field.value)?.installation_date} 00:00</p>
+                                                <p className="border border-black text-popover-foreground shadows-md text-xs rounded-md px-2 py-1.5 w-full tracking-tighter text-nowrap">{units.find((unit) => unit.id === field.value)?.installation_date} 00:00</p>
                                             )}
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <Checkbox checked={useSavedAccommodationDate} onCheckedChange={() => handleSetUseSavedAccommodationDate()} />
-                                            <p className="text-xs leading-none tracking-tight inline-block">Usar data de alojamento já cadastrada?</p>
+                                            <p className="text-xs leading-none tracking-tight inline-block w-auto">Usar data de alojamento já cadastrada?</p>
                                         </div>
                                     </div>
                                 </div>
