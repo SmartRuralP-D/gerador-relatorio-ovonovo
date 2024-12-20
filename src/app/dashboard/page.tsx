@@ -34,15 +34,7 @@ export default function Dashboard() {
 
                     router.push('/')
                 })
-            } else {
-                toast({
-                    title: "Faça login para acessar o sistema",
-                    duration: 3500,
-                })
-
-                router.push('/')
             }
-
             deleteCookie("temp_user", "/")
             deleteCookie("temp_password", "/")
         }
