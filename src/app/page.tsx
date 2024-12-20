@@ -89,7 +89,7 @@ export default function Home() {
     }, [router, toast]);
 
     return (
-        <div className="h-[86vh] w-full">
+        <div className="h-[84vh] w-full">
             <div className="w-full h-full flex justify-center items-center">
                 <div className="w-[55vw] lg:w-[35vw] bg-slate-300 rounded-xl">
                     <Form {...form}>

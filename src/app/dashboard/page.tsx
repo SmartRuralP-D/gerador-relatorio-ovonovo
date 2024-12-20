@@ -54,7 +54,7 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="h-[86vh] w-full flex justify-center items-center">
+        <div className="h-[84vh] w-full flex justify-center items-center">
             <div className="w-auto h-auto flex flex-col bg-slate-300 rounded-xl">
                 <div className="my-10 mx-7 flex flex-col items-center justify-center space-y-10">
                     <h1 className="text-2xl">Gerar relatório Avicultura</h1>
