@@ -25,7 +25,7 @@ function getProductiveUnits(): ProductiveUnit[] { // TODO: fix this
 async function fetchProductiveUnits(token: string): Promise<ProductiveUnit[]> {
     const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     const unitDetailsPromises = getProductiveUnits().map(async (unit, index) => {
-        await delay(index * 500);
+        await delay(index * 300);
         return apiInstance.get('/reports/get_uni_prod_details', {
             headers: {
                 Authorization: `Bearer ${token}`

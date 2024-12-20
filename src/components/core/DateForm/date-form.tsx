@@ -60,15 +60,19 @@ const formSchema = (timeForRange: Date, currentDate: Date) => z.object({ // bruh
     }),
 }).superRefine((data, ctx) => {
     const { dateFrom, dateTo } = adjustDates(data.dateRange.dateFrom, data.dateRange.dateTo, data.dateAccommodation, timeForRange, currentDate) // need to adjust dates before comparing
-    console.log(data.dateAccommodation)
     if (data.dateAccommodation <= dateFrom || data.dateAccommodation >= dateTo) {
         ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: "Data de alojamento deve estar entre o período escolhido",
             path: ["dateAccommodation"],
         })
+    } else if (dateTo.getTime() - dateFrom.getTime() > 1000 * 60 * 60 * 24 * 7 * 8) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Período escolhido não pode ser maior que 8 semanas",
+        })
     }
-});
+})
 
 type FormSchemaType = z.infer<ReturnType<typeof formSchema>>;
 const DateForm = () => {
@@ -200,6 +204,17 @@ const DateForm = () => {
         }
     }
 
+    function handleUnitChange() {
+        if (useSavedAccommodationDate) {
+            const unit = units.find((unit) => unit.id === form.getValues('unit'))
+            if (unit && unit.installation_date) {
+                let [day, month, year] = unit.installation_date.split('/');
+                let date = new Date(`${year}-${month}-${day}T00:00:00`);
+                form.setValue('dateAccommodation', date)
+            }
+        }
+    }
+
     const form = useForm<FormSchemaType>({
         resolver: zodResolver(formSchema(timeForRange ?? new Date(Date.now()), currentDate ?? new Date(Date.now()))),
     })
@@ -323,7 +338,12 @@ const DateForm = () => {
                                 <FormLabel className="text-left">Escolha a unidade produtiva</FormLabel>
                                 <div className="flex w-full gap-4">
                                     <FormControl>
-                                        <Select onValueChange={field.onChange} value={field.value}>
+                                        <Select onValueChange={(value) => {
+                                            field.onChange(value)
+                                            handleUnitChange()
+                                        }}
+                                            value={field.value}
+                                        >
                                             <SelectTrigger className="w-[65%]" >
                                                 <SelectValue placeholder="Unidade Produtiva" />
                                             </SelectTrigger>
