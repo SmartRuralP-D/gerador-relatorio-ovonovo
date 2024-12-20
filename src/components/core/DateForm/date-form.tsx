@@ -60,6 +60,7 @@ const formSchema = (timeForRange: Date, currentDate: Date) => z.object({ // bruh
     }),
 }).superRefine((data, ctx) => {
     const { dateFrom, dateTo } = adjustDates(data.dateRange.dateFrom, data.dateRange.dateTo, data.dateAccommodation, timeForRange, currentDate) // need to adjust dates before comparing
+    console.log(data.dateAccommodation)
     if (data.dateAccommodation <= dateFrom || data.dateAccommodation >= dateTo) {
         ctx.addIssue({
             code: z.ZodIssueCode.custom,
@@ -152,7 +153,7 @@ const DateForm = () => {
             window.open(url, '_blank');
             setLoading(false)
         }).catch((error) => {
-            if (error.response.data.error === "no_devices_in_uni_prod") {
+            if (error.response.data?.error === "no_devices_in_uni_prod") {
                 toast({
                     title: "Erro no servidor",
                     description: "Não há dispositivos cadastrados para essa unidade produtiva",
@@ -167,7 +168,6 @@ const DateForm = () => {
             }
             setLoading(false)
         })
-        setLoading(false)
     }
 
     const [dateRange, setDateRange] = useState<DateRange | undefined>({
@@ -190,6 +190,15 @@ const DateForm = () => {
     }
 
     const [useSavedAccommodationDate, setUseSavedAccommodationDate] = useState<boolean>(false) // for using the fetched accommodation date for the unit
+    function handleSetUseSavedAccommodationDate() {
+        setUseSavedAccommodationDate(!useSavedAccommodationDate)
+        const unit = units.find((unit) => unit.id === form.getValues('unit'))
+        if (unit && unit.installation_date) {
+            let [day, month, year] = unit.installation_date.split('/');
+            let date = new Date(`${year}-${month}-${day}T00:00:00`);
+            form.setValue('dateAccommodation', date)
+        }
+    }
 
     const form = useForm<FormSchemaType>({
         resolver: zodResolver(formSchema(timeForRange ?? new Date(Date.now()), currentDate ?? new Date(Date.now()))),
@@ -334,7 +343,7 @@ const DateForm = () => {
                                             )}
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <Checkbox checked={useSavedAccommodationDate} onCheckedChange={() => setUseSavedAccommodationDate(!useSavedAccommodationDate)} />
+                                            <Checkbox checked={useSavedAccommodationDate} onCheckedChange={() => handleSetUseSavedAccommodationDate()} />
                                             <p className="text-xs leading-none tracking-tight inline-block">Usar data de alojamento já cadastrada?</p>
                                         </div>
                                     </div>
@@ -348,6 +357,7 @@ const DateForm = () => {
                     type="submit"
                     loader={<Spinner />}
                     loading={loading}
+                    disabled={loading}
                 >
                     Gerar relatório
                 </Button>
