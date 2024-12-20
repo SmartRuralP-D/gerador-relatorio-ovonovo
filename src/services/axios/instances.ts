@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosHeaderValue } from 'axios'
 
 const apiInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_HOSTNAME,
@@ -6,17 +6,6 @@ const apiInstance = axios.create({
         'Content-Type': 'application/json',
     }
 })
-
-function setToken(token: string) {
-    if (!token) {
-        return
-    }
-    apiInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`
-}
-
-function clearToken() {
-    delete apiInstance.defaults.headers.common['Authorization']
-}
 
 // request interceptor
 apiInstance.interceptors.request.use((request) => {
@@ -30,4 +19,4 @@ apiInstance.interceptors.response.use((response) => {
     return response
 })
 
-export { apiInstance, setToken, clearToken }
+export { apiInstance }

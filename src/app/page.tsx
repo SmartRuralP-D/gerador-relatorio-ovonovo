@@ -40,6 +40,7 @@ export default function Home() {
 
     function onSubmit(data: z.infer<typeof schema>) {
         setLoading(true);
+        console.log(data)
         login(data.email, data.password).then(() => {
             toast({
                 title: "Login efetuado com sucesso",
@@ -51,7 +52,7 @@ export default function Home() {
             setCookie("password", data.password, null, cookiePath);
             setTimeout(() => {
                 router.push("/dashboard")
-            }, 1000);
+            }, 2000);
         }).catch((error: Error) => { // todo: handle error message better
             toast({
                 title: "Erro ao fazer login",
@@ -67,9 +68,6 @@ export default function Home() {
             try {
                 const user = await getCookie("user")
                 const password = await getCookie("password")
-
-                console.log("user:", user, "password:", password)
-
                 if (user && password) {
                     login(user, password).then((response) => {
                         if (response) {
