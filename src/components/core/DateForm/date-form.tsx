@@ -129,9 +129,11 @@ const DateForm = () => {
     })
     const [timeForRange, setTimeForRange] = useState<Date | undefined>(currentDate) // only contains the time and currentDate
     function handleDateRangeChange(newDateRange: DateRange | undefined) {
-        setDateRange({ from: new Date(newDateRange.from), to: new Date(newDateRange.to) })
-        form.setValue('dateRange.dateFrom', newDateRange.from)
-        form.setValue('dateRange.dateTo', newDateRange.to)
+        if (newDateRange && newDateRange.from && newDateRange.to) {
+            setDateRange({ from: new Date(newDateRange.from), to: new Date(newDateRange.to) })
+            form.setValue('dateRange.dateFrom', newDateRange.from)
+            form.setValue('dateRange.dateTo', newDateRange.to)
+        }
     }
 
     function handleTimeRangeChange(newTime: Date | undefined) { // saves the time in a different place
