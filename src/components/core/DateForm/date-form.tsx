@@ -79,7 +79,7 @@ const DateForm = () => {
     const router = useRouter()
 
     const [apiKey, setApiKey] = useState<string>("");
-    const [currentDate, setCurrentDate] = useState<Date | undefined>(undefined);
+    const [currentDate, setCurrentDate] = useState<Date>()
     const [units, setUnits] = useState<ProductiveUnit[]>([])
     useEffect(() => {
         const fetchData = async () => {
@@ -88,6 +88,7 @@ const DateForm = () => {
                 from: new Date(Date.now()),
                 to: new Date(Date.now()),
             })
+            setTimeForRange(new Date(Date.now()))
             form.setValue('dateAccommodation', new Date(Date.now()))
 
             const username: string | undefined = process.env.NEXT_PUBLIC_API_USERNAME
@@ -178,7 +179,7 @@ const DateForm = () => {
         from: currentDate,
         to: currentDate,
     })
-    const [timeForRange, setTimeForRange] = useState<Date | undefined>(currentDate) // only contains the time and currentDate
+    const [timeForRange, setTimeForRange] = useState<Date | undefined>() // only contains the time and currentDate
     function handleDateRangeChange(newDateRange: DateRange | undefined) {
         if (newDateRange && newDateRange.from && newDateRange.to) {
             setDateRange({ from: new Date(newDateRange.from), to: new Date(newDateRange.to) })
