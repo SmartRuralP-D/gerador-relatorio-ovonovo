@@ -31,21 +31,21 @@ async function getCookie(name: string): Promise<string | null> {
     }
 }
 
-async function deleteCookie(name: string) {
+async function deleteCookie(name: string, path: string) {
     try {
         const cookieStore = await cookies()
-        cookieStore.set(name, '', { expires: new Date(0), path: '/' })
+        cookieStore.set(name, '', { expires: new Date(0), path: path })
     } catch (error) {
         throw new Error(String(error))
     }
 }
 
-async function clearCookies() {
+async function clearCookies(path: string) {
     try {
         const cookieStore = await cookies()
         const allCookies = (await cookieStore.getAll())
         for (const cookie of allCookies) {
-            cookieStore.set(cookie.name, '', { expires: new Date(0), path: '/' })
+            cookieStore.set(cookie.name, '', { expires: new Date(0), path: path })
         }
     } catch (error) {
         throw new Error(String(error))

@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useEffect } from "react"
+import React, { useEffect } from 'react'
 import { toast } from '@/hooks/use-toast'
-import { getCookie, clearCookies } from '@/services/cookies/cookies'
+import { getCookie, deleteCookie } from '@/services/cookies/cookies'
 import { login } from '@/services/firebase/firebase'
 import { useRouter } from 'next/navigation'
 import { DateForm } from '@/components/core/DateForm/date-form'
@@ -43,8 +43,9 @@ export default function Dashboard() {
                 router.push('/')
             }
 
-            clearCookies()
-        };
+            deleteCookie("temp_user", "/")
+            deleteCookie("temp_password", "/")
+        }
         checkUser()
     }, [router, toast])
 
