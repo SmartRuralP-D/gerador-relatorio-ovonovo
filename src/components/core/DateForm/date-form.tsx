@@ -84,8 +84,8 @@ const DateForm = () => {
                 to: new Date(Date.now()),
             })
 
-            const username = process.env.NEXT_PUBLIC_API_USERNAME
-            const password = process.env.NEXT_PUBLIC_API_PASSWORD
+            const username: string | undefined = process.env.NEXT_PUBLIC_API_USERNAME
+            const password: string | undefined = process.env.NEXT_PUBLIC_API_PASSWORD
 
             if (!username || !password) {
                 toast({
@@ -100,9 +100,9 @@ const DateForm = () => {
 
             apiInstance.post('/api/token/', {
                 username: username,
-                password: password
+                password: password,
             }).then((response) => {
-                setApiKey(response.data.key)
+                setApiKey(response.data.key) //  TODO: fix this
             }).catch((error) => {
                 toast({
                     title: "Erro no servidor",
@@ -110,7 +110,7 @@ const DateForm = () => {
                     duration: 2000
                 })
                 setTimeout(() => {
-                    router.push('/')
+                    //router.push('/')
                 }, 2000)
             })
 
