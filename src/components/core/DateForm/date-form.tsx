@@ -117,7 +117,7 @@ const DateForm = () => {
             setUnits(await getProductiveUnits()) // TODO: re-add line
         }
         fetchData()
-    }, [router])
+    }, [router, toast])
 
     const [loading, setLoading] = useState(false);
     function onSubmit(data: FormSchemaType) { // uses apikey, startdate, enddate, accommodationdate and unitid

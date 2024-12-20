@@ -95,7 +95,7 @@ export default function Home() {
             }
         }
         fetchData()
-    }, [router]);
+    }, [router, toast]);
 
     return (
         <div className="h-[86vh] w-full">

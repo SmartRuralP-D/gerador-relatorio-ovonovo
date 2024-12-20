@@ -41,7 +41,7 @@ export default function Dashboard() {
             }
         };
         checkUser()
-    }, [router])
+    }, [router, toast])
 
     return (
         <div className="h-[86vh] w-full flex justify-center items-center">
