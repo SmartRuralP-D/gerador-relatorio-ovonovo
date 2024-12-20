@@ -7,6 +7,17 @@ const apiInstance = axios.create({
     }
 })
 
+function setToken(token: string) {
+    if (!token) {
+        return
+    }
+    apiInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`
+}
+
+function clearToken() {
+    delete apiInstance.defaults.headers.common['Authorization']
+}
+
 // request interceptor
 apiInstance.interceptors.request.use((request) => {
     // console.log('Starting Request', request)
@@ -19,4 +30,4 @@ apiInstance.interceptors.response.use((response) => {
     return response
 })
 
-export { apiInstance }
+export { apiInstance, setToken, clearToken }

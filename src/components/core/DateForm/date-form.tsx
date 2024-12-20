@@ -34,7 +34,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from '@/hooks/use-toast'
 import { DateRange } from 'react-day-picker'
 import { Spinner } from '@/components/ui/spinner'
-import { apiInstance } from '@/services/axios/instances'
+import { apiInstance, setToken, clearToken } from '@/services/axios/instances'
 import { useRouter } from 'next/navigation'
 import { adjustDates, toUnix } from '@/lib/date'
 import { getProductiveUnits } from '@/services/api/units'
@@ -128,7 +128,6 @@ const DateForm = () => {
         const unixDateAccommodation = toUnix(data.dateAccommodation)
         const key = apiKey
         const unitId = data.unit
-        // TODO: send api request with data, also use key and unitid
 
         console.log("Sent data: " + JSON.stringify({ // TODO: remove this
             apiKey: apiKey,
@@ -137,6 +136,26 @@ const DateForm = () => {
             accommodationDate: unixDateAccommodation,
             unitId: data.unit,
         }))
+
+        setToken(key ?? "")
+
+        apiInstance.post('/reports/get_chicken_week_report', {
+            params: {
+                unix_timestamp_ini: unixDateFrom,
+                unix_timestamp_end: unixDateTo,
+                unit_id: unitId,
+                unix_installation_date: unixDateAccommodation,
+            }
+        }).then((response) => { // TODO: test if this works
+            const url = response.data.url; // returns an url with a pdf to download
+            window.open(url, '_blank');
+        }).catch((error) => {
+            toast({
+                title: "Erro no servidor",
+                description: "Não foi possível obter o relatório - Contate o suporte",
+                duration: 2000
+            })
+        })
 
         setLoading(false)
     }
