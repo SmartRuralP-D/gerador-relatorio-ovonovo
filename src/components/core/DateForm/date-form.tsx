@@ -350,7 +350,7 @@ const DateForm = () => {
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {units.map((unit) => (
-                                                    <SelectItem key={unit.id} value={unit.id}>
+                                                    <SelectItem key={unit.id} value={unit.id} className="cursor-pointer">
                                                         {unit.name}
                                                     </SelectItem>
                                                 ))}
