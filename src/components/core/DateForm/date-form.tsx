@@ -83,22 +83,38 @@ const DateForm = () => {
                 from: new Date(Date.now()),
                 to: new Date(Date.now()),
             })
-            apiInstance.get('/api/api', {
-                params: {
-                    user: process.env.NEXT_PUBLIC_API_USERNAME,
-                    password: process.env.NEXT_PUBLIC_API_PASSWORD,
-                }
+
+            const username = process.env.NEXT_PUBLIC_API_USERNAME
+            const password = process.env.NEXT_PUBLIC_API_PASSWORD
+
+            if (!username || !password) {
+                toast({
+                    title: "Erro de configuração",
+                    description: "Credenciais da API não configuradas - Contate o suporte",
+                    duration: 2000
+                })
+                setTimeout(() => {
+                    router.push('/')
+                }, 2000)
+            }
+
+            apiInstance.post('/api/token/', {
+                username: username,
+                password: password
             }).then((response) => {
-                setApiKey(response.data.key) // TODO: fix this
+                setApiKey(response.data.key)
             }).catch((error) => {
                 toast({
                     title: "Erro no servidor",
                     description: "Não foi possível obter as credenciais da API - Contate o suporte",
                     duration: 2000
                 })
-                //router.push('/') // TODO: re-add line
+                setTimeout(() => {
+                    router.push('/')
+                }, 2000)
             })
-            setUnits(await getProductiveUnits())
+
+            setUnits(await getProductiveUnits()) // TODO: re-add line
         }
         fetchData()
     }, [router])
@@ -110,6 +126,8 @@ const DateForm = () => {
         const unixDateFrom = toUnix(dateFrom)
         const unixDateTo = toUnix(dateTo)
         const unixDateAccommodation = toUnix(data.dateAccommodation)
+        const key = apiKey
+        const unitId = data.unit
         // TODO: send api request with data, also use key and unitid
 
         console.log("Sent data: " + JSON.stringify({ // TODO: remove this
