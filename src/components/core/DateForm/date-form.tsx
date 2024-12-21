@@ -155,8 +155,10 @@ const DateForm = () => {
             }
         }).then((response) => { // TODO: test if this works
             const newWindow = window.open('', '_blank');
-            const url = response.data.download_url;
-            newWindow.location.href = url;
+            if (newWindow) {
+                const url = response.data.download_url;
+                newWindow.location.href = url;
+            }
             setLoading(false)
         }).catch((error) => {
             if (error.response.data?.error === "no_devices_in_uni_prod") {
