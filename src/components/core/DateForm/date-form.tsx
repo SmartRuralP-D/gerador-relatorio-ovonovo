@@ -375,7 +375,7 @@ const DateForm = () => {
                                     <div className="flex items-center gap-2 w-full justify-center">
                                         <div className="flex items-center w-auto">
                                             {units.find((unit) => unit.id === field.value)?.installation_date && (
-                                                <p className="border border-black text-popover-foreground shadows-md text-xs rounded-md px-2 py-1.5 w-full tracking-tighter text-nowrap">{units.find((unit) => unit.id === field.value)?.installation_date} 00:00</p>
+                                                <p className={`border shadows-md text-xs rounded-md px-2 py-1.5 w-full tracking-tighter text-nowrap ${useSavedAccommodationDate ? "text-popover-foreground border-black" : "text-muted-foreground"}`}>{units.find((unit) => unit.id === field.value)?.installation_date} 00:00</p>
                                             )}
                                         </div>
                                         <div className="flex items-center gap-2">
