@@ -40,10 +40,10 @@ export default function Home() {
             email: "",
             password: "",
         },
-    });
+    })
 
     function onSubmit(data: z.infer<typeof schema>) {
-        setLoading(true);
+        setLoading(true)
         login(data.email, data.password).then(() => {
             // if login works, there will be a toast message on the other page
             const cookiePath = "/"
@@ -58,17 +58,17 @@ export default function Home() {
                 deleteCookie("password", cookiePath)
             }
             setTimeout(() => {
+                setLoading(false)
                 router.push("/dashboard")
             }, 2000);
         }).catch((error: Error) => { // TODO: handle error message better (cases where its not incorrect email/password)
-            console.log(error)
             toast({
                 title: "Erro ao fazer login",
                 description: error.message,
                 duration: 3000,
             })
+            setLoading(false)
         })
-        setLoading(false);
     }
 
     useEffect(() => { // check if the user has saved credentials
@@ -86,7 +86,7 @@ export default function Home() {
             }
         }
         fetchData()
-    }, [router, toast]);
+    }, [router, toast])
 
     return (
         <div className="h-[84vh] w-full">
@@ -130,11 +130,11 @@ export default function Home() {
                                     <p className="text-xs">Lembrar de mim</p>
                                 </div>
                             </div>
-                            <Button loader={<Spinner />} loading={loading} variant="default" type="submit">Entrar</Button>
+                            <Button loader={<Spinner />} loading={loading} disabled={loading} variant="default" type="submit">Entrar</Button>
                         </form>
                     </Form>
                 </div>
             </div>
         </div>
-    );
+    )
 }
