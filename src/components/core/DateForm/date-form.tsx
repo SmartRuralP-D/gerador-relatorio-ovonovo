@@ -238,7 +238,7 @@ const DateForm = () => {
     return (
         <Form {...form}>
             <form
-                className="flex items-center gap-6 justify-center flex-col w-auto h-auto"
+                className="flex items-center gap-6 justify-center flex-col w-[60vw] md:w-[50vw] lg:w-[40vw] xl:w-[30vw] h-auto"
                 onSubmit={form.handleSubmit(onSubmit)}
             >
                 <div className="flex flex-col gap-10">
