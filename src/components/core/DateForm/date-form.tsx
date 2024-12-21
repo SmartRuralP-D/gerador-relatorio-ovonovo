@@ -60,10 +60,10 @@ const formSchema = (timeForRange: Date, currentDate: Date) => z.object({ // bruh
     }),
 }).superRefine((data, ctx) => {
     const { dateFrom, dateTo } = adjustDates(data.dateRange.dateFrom, data.dateRange.dateTo, data.dateAccommodation, timeForRange, currentDate) // need to adjust dates before comparing
-    if (data.dateAccommodation <= dateFrom || data.dateAccommodation >= dateTo) {
+    if (data.dateAccommodation >= dateTo) {
         ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: "Data de alojamento deve estar entre o período escolhido",
+            message: "Data de alojamento deve ser antes da data final",
             path: ["dateAccommodation"],
         })
     } else if (dateTo.getTime() - dateFrom.getTime() > 1000 * 60 * 60 * 24 * 7 * 4) { // 4 weeks range
