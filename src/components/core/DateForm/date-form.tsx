@@ -154,11 +154,13 @@ const DateForm = () => {
                 unix_installation_date: unixDateAccommodation,
             }
         }).then((response) => { // TODO: test if this works
-            const newWindow = window.open('', '_blank');
-            if (newWindow) {
-                const url = response.data.download_url;
-                newWindow.location.href = url;
-            }
+            const url = response.data.download_url
+            const link = document.createElement('a')
+            link.href = url
+            link.download = 'relatório_gerado.pdf' // You can set the desired file name here
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
             setLoading(false)
         }).catch((error) => {
             if (error.response.data?.error === "no_devices_in_uni_prod") {
