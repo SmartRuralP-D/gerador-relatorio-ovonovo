@@ -154,8 +154,9 @@ const DateForm = () => {
                 unix_installation_date: unixDateAccommodation,
             }
         }).then((response) => { // TODO: test if this works
-            const url = response.data.download_url; // returns an url with a pdf to download
-            window.open(url, '_blank');
+            const newWindow = window.open('', '_blank');
+            const url = response.data.download_url;
+            newWindow.location.href = url;
             setLoading(false)
         }).catch((error) => {
             if (error.response.data?.error === "no_devices_in_uni_prod") {
