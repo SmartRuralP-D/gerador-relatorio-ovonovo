@@ -66,7 +66,7 @@ const formSchema = (timeForRange: Date, currentDate: Date) => z.object({ // bruh
             message: "Data de alojamento deve estar entre o período escolhido",
             path: ["dateAccommodation"],
         })
-    } else if (dateTo.getTime() - dateFrom.getTime() > 1000 * 60 * 60 * 24 * 7 * 8) {
+    } else if (dateTo.getTime() - dateFrom.getTime() > 1000 * 60 * 60 * 24 * 7 * 4) { // 4 weeks range
         ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: "Período escolhido não pode ser maior que 8 semanas",
@@ -129,6 +129,16 @@ const DateForm = () => {
     function onSubmit(data: FormSchemaType) { // uses apikey, startdate, enddate, accommodationdate and unitid
         setLoading(true)
         const { dateFrom, dateTo } = adjustDates(data.dateRange.dateFrom, data.dateRange.dateTo, data.dateAccommodation, timeForRange, currentDate)
+        if (dateTo.getTime() - dateFrom.getTime() > 1000 * 60 * 60 * 24 * 7 * 4) { // 4 weeks range
+            toast({
+                title: "Período muito longo",
+                description: "Período escolhido não pode ser maior que 8 semanas",
+                duration: 3500
+            })
+            setLoading(false)
+            return
+        }
+
         const unixDateFrom = toUnix(dateFrom)
         const unixDateTo = toUnix(dateTo)
         const key = apiKey
@@ -228,7 +238,7 @@ const DateForm = () => {
     return (
         <Form {...form}>
             <form
-                className="flex items-center gap-6 justify-center flex-col w-auto h-auto"
+                className="flex items-center gap-6 justify-center flex-col w-[60vw] md:w-[50vw] lg:w-[40vw] xl:w-[30vw] h-auto"
                 onSubmit={form.handleSubmit(onSubmit)}
             >
                 <div className="flex flex-col gap-10">
@@ -365,7 +375,7 @@ const DateForm = () => {
                                     <div className="flex items-center gap-2 w-full justify-center">
                                         <div className="flex items-center w-auto">
                                             {units.find((unit) => unit.id === field.value)?.installation_date && (
-                                                <p className="border border-black text-popover-foreground shadows-md text-xs rounded-md px-2 py-1.5 w-full tracking-tighter text-nowrap">{units.find((unit) => unit.id === field.value)?.installation_date} 00:00</p>
+                                                <p className={`border shadows-md text-xs rounded-md px-2 py-1.5 w-full tracking-tighter text-nowrap ${useSavedAccommodationDate ? "text-popover-foreground border-black" : "text-muted-foreground"}`}>{units.find((unit) => unit.id === field.value)?.installation_date} 00:00</p>
                                             )}
                                         </div>
                                         <div className="flex items-center gap-2">
