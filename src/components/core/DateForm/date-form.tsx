@@ -131,6 +131,7 @@ const DateForm = () => {
         const { dateFrom, dateTo } = adjustDates(data.dateRange.dateFrom, data.dateRange.dateTo, data.dateAccommodation, timeForRange, currentDate)
         if (dateTo.getTime() - dateFrom.getTime() > 1000 * 60 * 60 * 24 * 7 * 4) { // 4 weeks range
             toast({
+                variant: "destructive",
                 title: "Período muito longo",
                 description: "Período escolhido não pode ser maior que 8 semanas",
                 duration: 3500
@@ -166,6 +167,7 @@ const DateForm = () => {
         }).then((response) => { // TODO: test if this works
             if (response.status === 204) { // no-content
                 toast({
+                    variant: "destructive",
                     title: "Sem dados",
                     description: "Não há dados para o período selecionado",
                     duration: 3500
@@ -176,7 +178,7 @@ const DateForm = () => {
             const url = response.data.download_url
             const link = document.createElement('a')
             link.href = url
-            link.download = 'relatório_gerado.pdf' // You can set the desired file name here
+            link.download = 'relatório_gerado.pdf'
             document.body.appendChild(link)
             link.click()
             document.body.removeChild(link)
@@ -184,12 +186,14 @@ const DateForm = () => {
         }).catch((error) => {
             if (error.response.data?.error === "no_devices_in_uni_prod") {
                 toast({
+                    variant: "destructive",
                     title: "Erro no servidor",
                     description: "Não há dispositivos cadastrados para essa unidade produtiva",
                     duration: 3500
                 })
             } else {
                 toast({
+                    variant: "destructive",
                     title: "Erro no servidor",
                     description: "Não foi possível obter o relatório - Contate o suporte",
                     duration: 3500
