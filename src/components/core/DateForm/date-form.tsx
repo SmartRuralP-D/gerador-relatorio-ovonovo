@@ -69,7 +69,7 @@ const formSchema = (timeForRange: Date, currentDate: Date) => z.object({ // bruh
     } else if (dateTo.getTime() - dateFrom.getTime() > 1000 * 60 * 60 * 24 * 7 * 4) { // 4 weeks range
         ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: "Período escolhido não pode ser maior que 8 semanas",
+            message: "Período escolhido não pode ser maior que 4 semanas",
         })
     }
 })
