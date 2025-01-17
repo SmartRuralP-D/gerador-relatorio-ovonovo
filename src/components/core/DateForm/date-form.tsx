@@ -164,12 +164,12 @@ const DateForm = () => {
                 unit_id: unitId,
                 unix_installation_date: unixDateAccommodation,
             }
-        }).then((response) => { // TODO: test if this works
+        }).then((response) => {
             if (response.status === 204) { // no-content
                 toast({
                     variant: "destructive",
                     title: "Sem dados",
-                    description: "Não há dados para o período selecionado",
+                    description: "Não há dados para o período selecionado ou para unidade selecionada",
                     duration: 3500
                 })
                 setLoading(false)
