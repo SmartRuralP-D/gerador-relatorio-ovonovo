@@ -164,6 +164,15 @@ const DateForm = () => {
                 unix_installation_date: unixDateAccommodation,
             }
         }).then((response) => { // TODO: test if this works
+            if (response.status === 204) { // no-content
+                toast({
+                    title: "Sem dados",
+                    description: "Não há dados para o período selecionado",
+                    duration: 3500
+                })
+                setLoading(false)
+                return
+            }
             const url = response.data.download_url
             const link = document.createElement('a')
             link.href = url
